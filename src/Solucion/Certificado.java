@@ -20,62 +20,59 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 public class Certificado
-	{
-	
-	
-	
+{
 	X509Certificate certificado ;
-	 private PrivateKey priv ;
-	 private PublicKey pub ;
+	private PrivateKey priv ;
+	private PublicKey pub ;
 
-	
+
 	public Certificado() throws Exception
-	
 	{
-	
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
-	String startDates = "31-08-2015";
-	String finDates = "31-08-2018";
-	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
+		String startDates = "31-08-2015";
+		String finDates = "31-08-2018";
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-	KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA","BC");
-	
-	SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-	keyGen.initialize(1024, random);
-	
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA","BC");
 
-	KeyPair pair = keyGen.generateKeyPair();
-setPriv(pair.getPrivate());
-setPub(pair.getPublic());
-	
-	SignatureAlgorithm jesus ;
-	jesus = new SignatureAlgorithm();
-	
-	BigInteger sum = BigInteger.valueOf(0);
-	for(int i = 2; i < 5000; i++) {
-	    if (i%5 == 0) {
-	        sum = sum.add(BigInteger.valueOf(i));
-	    }
-	}
-	
-	Date startDate = sdf.parse(startDates);                // time from which certificate is valid
-	Date expiryDate = sdf.parse(finDates);               // time after which certificate is not valid
-	BigInteger serialNumber =sum;       // serial number for certificate
-	KeyPair keyPair =  keyGen.generateKeyPair(); // EC public/private key pair
-	
+		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+		keyGen.initialize(1024, random);
 
-	X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
-	X500Principal              dnName = new X500Principal("CN=Test CA Certificate");
-	certGen.setSerialNumber(serialNumber);
-	certGen.setIssuerDN(dnName);
-	certGen.setNotBefore(startDate);
-	certGen.setNotAfter(expiryDate);
-	certGen.setSubjectDN(dnName);                       // note: same as issuer
-	certGen.setPublicKey(keyPair.getPublic());
-	certGen.setSignatureAlgorithm("SHA1withRSA");
-	X509Certificate cert= certGen.generate(keyPair.getPrivate(), "BC");
-	
-	certificado = cert;
+
+		KeyPair pair = keyGen.generateKeyPair();
+		setPriv(pair.getPrivate());
+		setPub(pair.getPublic());
+
+		SignatureAlgorithm jesus ;
+		jesus = new SignatureAlgorithm();
+
+		BigInteger sum = BigInteger.valueOf(0);
+		for(int i = 2; i < 5000; i++) 
+		{
+			if (i%5 == 0) 
+			{
+				sum = sum.add(BigInteger.valueOf(i));
+			}
+		}
+
+		Date startDate = sdf.parse(startDates);                // time from which certificate is valid
+		Date expiryDate = sdf.parse(finDates);               // time after which certificate is not valid
+		BigInteger serialNumber =sum;       // serial number for certificate
+		KeyPair keyPair =  keyGen.generateKeyPair(); // EC public/private key pair
+
+
+		X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
+		X500Principal              dnName = new X500Principal("CN=Test CA Certificate");
+		certGen.setSerialNumber(serialNumber);
+		certGen.setIssuerDN(dnName);
+		certGen.setNotBefore(startDate);
+		certGen.setNotAfter(expiryDate);
+		certGen.setSubjectDN(dnName);                       // note: same as issuer
+		certGen.setPublicKey(keyPair.getPublic());
+		certGen.setSignatureAlgorithm("SHA1withRSA");
+		X509Certificate cert= certGen.generate(keyPair.getPrivate(), "BC");
+
+		certificado = cert;
 
 	}
 
@@ -98,10 +95,5 @@ setPub(pair.getPublic());
 	public void setPub(PublicKey pub) {
 		this.pub = pub;
 	}
-	
-	
-	
-	
-	
-	
+
 }
