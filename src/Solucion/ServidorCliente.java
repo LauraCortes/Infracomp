@@ -2,6 +2,7 @@ package Solucion;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -127,6 +128,8 @@ public class ServidorCliente
 							
 							//ETAPA 3: AUTENTICACION DEL CLIENTE Y EL SERVIDOR
 							String privateKEY = lector.readLine();
+							System.out.println("Servidor: " + privateKEY);
+
 							
 							if(privateKEY!=null)
 							{
@@ -134,19 +137,44 @@ public class ServidorCliente
 								fromUser =RTA_AFIRTMATIVA;
 								System.out.println("Cliente: " + fromUser);
 								escritor.println(fromUser);
-								System.out.println(privateKEY);
-//								String[] llave = privateKEY.split(":");
+								
+								
 								Cipher cifrado = Cipher.getInstance("RSA");
-								cifrado.init(Cipher.DECRYPT_MODE, enviar.getPriv());
-//								byte[] hola1 = DatatypeConverter.parseHexBinary(llave[1]);
-//								byte[] hola2 = cifrado.doFinal(hola1);
-//								SecretKey llaveFinal = new SecretKeySpec(hola2, 0,hola2.length,"AES");
+								cifrado.init(Cipher.ENCRYPT_MODE, enviar.getPriv());
+
+								byte [] envio1 = (NUM1 + "").getBytes();
+							    byte[] funciona =  cifrado.doFinal(envio1);
+							    String s2 = new String (funciona);
+
+								System.out.println("Cliente: Este es el mensaje cifrado " + s2);
+
+								escritor.println(s2);
+
+								
+								//Etapa 4
+								
+								if ((fromServer = lector.readLine()) != null  )
+								{
+									
+									
+									System.out.println("Cliente: Este es el mensaje cifrado " + s2);
+
+
+								}
+								else
+								{
+									System.out.println("Paila");
+
+									break;
+
+								}
+							    
 							}
 							else
 							{
 								//NO ACEPTA LA LLAVE DEL SERVIDOR
 								fromUser ="RTA:ERROR";
-								System.out.println("Cliente: " + fromUser);
+								System.out.println("Error  Cliente: " + fromUser);
 								escritor.println(fromUser);
 								break;
 							}
