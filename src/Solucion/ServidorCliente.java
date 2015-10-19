@@ -134,11 +134,7 @@ public class ServidorCliente
 							//DESCIFRA EL NUMERO QUE ENVIO EL SERVIDOR
 							Cipher desCifrado = Cipher.getInstance(ALGORITMO);
 							desCifrado.init(Cipher.DECRYPT_MODE, certificadoServidor.getPublicKey());
-							byte[] cipheredText = new byte[privateKEY.length()/2];
-							for (int i = 0 ; i < cipheredText.length ; i++) 
-							{
-								cipheredText[i] = (byte) Integer.parseInt(privateKEY.substring(i*2,(i+1)*2), 16);
-							}
+							byte[] cipheredText = Transformacion.destransformar(privateKEY);
 							byte [] clearText = desCifrado.doFinal(cipheredText);
 							String s3 = new String(clearText);
 							double respuestaServidor=Double.parseDouble(s3);
@@ -149,28 +145,25 @@ public class ServidorCliente
 								fromUser =RTA_AFIRTMATIVA;
 								System.out.println("Cliente: " + fromUser);
 								escritor.println(fromUser);
-								
+
 								//CIFRA EL NUMERO 2
 								Cipher cipher = Cipher.getInstance(ALGORITMO);
-								byte [] num2 = (Double.toString(NUM2)).getBytes();
+								byte [] num2 = (NUM2+"").getBytes();
 								cipher.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
 								byte [] cipheredNum2 = cipher.doFinal(num2);
-								fromUser = "";
-								for (int i = 0 ; i < cipheredNum2.length ; i++) {
-									String g = Integer.toHexString(((char)cipheredNum2[i])&0x00ff);
-									fromUser += (g.length()==1?"0":"") + g;
-								}
+								fromUser=Transformacion.transformar(cipheredNum2);
 						        System.out.println("Cliente: "+fromUser);
 						        escritor.println(fromUser);
+						        
 								//ETAPA 4:
-								if ((fromServer = lector.readLine()) != null  )
+								if ((fromServer = lector.readLine()) != null  &&fromServer.equals(RTA_AFIRTMATIVA))
 								{		
-									
-
+									System.out.println("Servidor: "+fromServer);
+									escritor.println("INIT:");
 								}
 								else
 								{
-									System.out.println("Paila");
+									System.out.println("Servidor: RTA:ERROR");
 									break;
 								}
 							}
