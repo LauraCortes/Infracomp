@@ -1,5 +1,7 @@
 package Solucion;
 
+
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -8,6 +10,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+
+import javax.crypto.Cipher;
+
+
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -97,13 +103,31 @@ public class ServidorCliente
 						
 			 System.out.println("Servidor: " + "Le envio mi Certificado");
                  
-			 
+			 //Etapa 2 autentificacion del cliente y servidor
 			 if (certificadoServidor != null)
 			 {
 				 fromUser ="RTA:OK";
 				 System.out.println("Cliente: " + fromUser);
 			 	 escritor.println(fromUser);
+			 	 String privateKEY = lector.readLine();
+			 	 
+			 	Cipher cifrado = Cipher.getInstance("RSA");
+				cifrado.init(Cipher.DECRYPT_MODE, enviar.getPriv());
+				
+			
+				
+				
+				
+				
+				
+				
+				
+				
 
+			 }
+			 else
+			 {
+				 break;
 			 }
 			 
 	 	  
