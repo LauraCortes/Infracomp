@@ -69,7 +69,7 @@ public class ServidorCliente
 				System.out.println("Servidor: " + fromServer);
 
 				//AlGORTIMOS QUE SE VAN A UTILIZAR
-				fromUser ="ALGORITMOS:"+ALGORITMO+":"+MAC;
+				fromUser ="ALGORITMOS:"+ALGORITMO+":"+MAC+":HmacSHA256";
 				System.out.println("Cliente: " + fromUser);
 				escritor.println(fromUser);
 				fromUser = "";
@@ -148,7 +148,7 @@ public class ServidorCliente
 
 								//CIFRA EL NUMERO 2
 								Cipher cipher = Cipher.getInstance(ALGORITMO);
-								byte [] num2 = (NUM2+"").getBytes();
+								byte [] num2 = (String.valueOf(NUM2)).getBytes();
 								cipher.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
 								byte [] cipheredNum2 = cipher.doFinal(num2);
 								fromUser=Transformacion.transformar(cipheredNum2);
@@ -159,7 +159,73 @@ public class ServidorCliente
 								if ((fromServer = lector.readLine()) != null  &&fromServer.equals(RTA_AFIRTMATIVA))
 								{		
 									System.out.println("Servidor: "+fromServer);
-									escritor.println("INIT:");
+									
+						            SecretKeySpec signingKey = new SecretKeySpec("jesus".getBytes(), "HmacMD5");
+						            
+									fromUser=Transformacion.transformar(signingKey.getEncoded());
+
+									System.out.println("Cliente: INIT:" +fromUser);
+
+
+
+						            Cipher privada = Cipher.getInstance("RSA");
+									privada.init(Cipher.ENCRYPT_MODE, certificadoServidor.getPublicKey());
+									byte[] hash = privada.doFinal(fromUser.getBytes());
+									fromUser=Transformacion.transformar(hash);
+									
+										
+									
+									System.out.println("Cliente: INIT:" +fromUser);
+
+									Cipher llaveHmac = Cipher.getInstance("RSA");
+									llaveHmac.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
+									byte[] llave = llaveHmac.doFinal(fromUser.getBytes());
+									fromUser=Transformacion.transformar(llave);
+									
+									
+									
+									
+									
+									escritor.println("INIT:" + fromUser);
+									
+									System.out.println("Cliente: INIT:" +fromUser);
+
+									
+							
+
+									/**
+									 * 									byte[] keyBytes = certificadoServidor.getPublicKey().getEncoded();           
+
+									Mac mac = Mac.getInstance("HmacMD5");
+									mac.init(signingKey);	
+									byte[] macNumero2 = (NUM2+"").getBytes();
+									byte[] hMac = mac.doFinal(macNumero2);
+									
+									
+									
+									
+									
+									
+									
+									
+											
+									
+									String ordenes1 = "ordenes asd";
+									Cipher orden = Cipher.getInstance("RSA");
+									privada.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
+									byte[] envio = privada.doFinal(ordenes1.getBytes());
+									fromUser=Transformacion.transformar(envio);
+									escritor.println("INIT:" + fromUser);
+									
+									System.out.println("Jesus: "+fromUser);
+									
+									
+									
+									
+									 */
+									
+									
+									
 								}
 								else
 								{
