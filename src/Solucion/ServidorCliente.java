@@ -162,19 +162,18 @@ public class ServidorCliente
 									
 									//ETAPA 4: ACTUALIZACION
 									//LLAVE Kmac
-						            SecretKeySpec signingKey = new SecretKeySpec("jesus".getBytes(), MAC);           
-									fromUser=Transformacion.transformar(signingKey.getEncoded());
+						            SecretKeySpec millave = new SecretKeySpec("jesus".getBytes(), MAC);           
 
 									//CIFRA CON LA LLAVE PUBLICA DEL SERVIDOR
 						            Cipher privada = Cipher.getInstance(ALGORITMO);
 									privada.init(Cipher.ENCRYPT_MODE, certificadoServidor.getPublicKey());
-									byte[] hash = privada.doFinal(fromUser.getBytes());
+									byte[] hash = privada.doFinal(millave.getEncoded());
 									fromUser=Transformacion.transformar(hash);
 						
 									//CIFRA POR BLOQUE CON LA LLAVE PRIVADA DEL CLIENTE
 									Cipher llaveHmac = Cipher.getInstance(ALGORITMO);
 									llaveHmac.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
-									byte[]cifrar=fromUser.getBytes();
+									byte[]cifrar=hash;
 									int i=0;
 									ArrayList<byte[]> cifrados=new ArrayList<byte[]>();
 									int tamanio=0;
@@ -208,17 +207,41 @@ public class ServidorCliente
 									
 									byte[] keyBytes = certificadoServidor.getPublicKey().getEncoded();           
 
-//									Mac mac = Mac.getInstance("HmacMD5");
-//									mac.init(signingKey);	
-//									byte[] macNumero2 = (NUM2+"").getBytes();
-//									byte[] hMac = mac.doFinal(macNumero2);
-//									String ordenes1 = "ordenes asd";
-//									Cipher orden = Cipher.getInstance("RSA");
-//									privada.init(Cipher.ENCRYPT_MODE, certificadoCliente.getPriv());
-//									byte[] envio = privada.doFinal(ordenes1.getBytes());
-//									fromUser=Transformacion.transformar(envio);
-//									escritor.println("INIT:" + fromUser);
-//
+									String ordenes1 = "ordenes asd";
+
+									
+									Cipher orden = Cipher.getInstance("RSA");
+									orden.init(Cipher.ENCRYPT_MODE, certificadoServidor.getPublicKey());
+									byte[] envio = orden.doFinal(ordenes1.getBytes());
+									fromUser=Transformacion.transformar(envio);
+									escritor.println( fromUser);
+									System.out.println("Cliente: Ordenes: " +fromUser);
+
+									
+									Mac mac = Mac.getInstance("HmacMD5");
+									mac.init(millave);	
+									byte[] macNumero2 = ordenes1.getBytes();
+									byte[] hMac = mac.doFinal(macNumero2);
+
+									Cipher integridadOrden = Cipher.getInstance("RSA");
+									integridadOrden.init(Cipher.ENCRYPT_MODE, certificadoServidor.getPublicKey());
+									byte[] intorder = integridadOrden.doFinal(hMac);
+									fromUser=Transformacion.transformar(intorder);
+									
+									escritor.println(fromUser );
+
+									
+									System.out.println("Cliente: ordenes con mac: " +fromUser);
+
+									fromServer = lector.readLine();
+									if (fromServer.equals(RTA_AFIRTMATIVA))
+									{
+										System.out.println("CORONAMOS");
+										break;
+
+									}
+									
+
 //									System.out.println("Jesus: "+fromUser);
 								}
 								else
