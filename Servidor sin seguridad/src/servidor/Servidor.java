@@ -74,28 +74,16 @@ public class Servidor implements Runnable  {
 		socket = new ServerSocket(PUERTO);
 
 		// Crea un semaforo que da turnos para usar el socket.
-		Semaphore sem = new Semaphore(1);
-		int numTreads= 50;
-		 ExecutorService executor = Executors.newFixedThreadPool(numTreads);
-		 
-		         for (int i = 0; i < numTreads; i++) {
-		 
-		             Runnable worker = new Servidor(i,sem);
-		 
-		             executor.execute(worker);
-		 
-		           }
-		 		System.out.println("El servidor esta listo para aceptar conexiones.");
 
-		         executor.shutdown();
-		 
-		         while (!executor.isTerminated()) {
-		 
-		         }
-		 
-		         System.out.println("Finished all threads");
-
-
+				// Genera n threads que correran durante la sesion.
+				Servidor [] threads = new Servidor[N_THREADS];
+				
+				//Nuevo implementacion del Pool de threads con las librerias nuevas.
+				ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
+				for ( int i = 0 ; i < N_THREADS ; i++) {
+					executorService.execute(new Servidor(i));
+				}
+				System.out.println("El servidor esta listo para aceptar conexiones.");
 	}
 
 	/**
@@ -109,10 +97,8 @@ public class Servidor implements Runnable  {
 	 *             Si hubo un problema con el semaforo.
 	 * @throws SocketException 
 	 */
-	public Servidor(int id, Semaphore s) throws  SocketException {
-		this.id = id;
-		semaphore=s;
-		
+	public Servidor(int id) throws  SocketException {
+		this.id = id;	
 	}
 
 	/**
@@ -126,23 +112,19 @@ public class Servidor implements Runnable  {
 			// Recibe una conexion del socket.
 			// ////////////////////////////////////////////////////////////////////////
 
-			try {
-				semaphore.acquire();
+			try 
+			{
+				System.out.println("Servidor " + id + " listo para recibir conexiones");
 				s = socket.accept();
 				s.setSoTimeout(TIME_OUT);
-			} catch (IOException e) {
-				e.printStackTrace();
-				semaphore.release();
-				continue;
-			} catch (Exception e) {
-				// Si hubo algun error tomando turno en el semaforo.
-				// No deberia alcanzarse en condiciones normales de ejecucion.
-				semaphore.release();
+			} 
+			catch (IOException e)
+			{
 				e.printStackTrace();
 				continue;
-			}
-			semaphore.release();
+			} 
 			System.out.println("Thread " + id + " recibe a un cliente.");
+
 			Protocolo protocolo =new Protocolo();
 			protocolo.atenderCliente(s);
 		}
