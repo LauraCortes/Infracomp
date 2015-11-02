@@ -1,7 +1,4 @@
-package Solucion;
-
-
-
+ package Solucion;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,20 +11,9 @@ import java.net.Socket;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-
 import javax.crypto.Cipher;
-
-
-
 import javax.crypto.Mac;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
-import uniandes.gload.core.LoadGenerator;
 import uniandes.gload.core.Task;
 
 public class ServidorCliente extends Task
@@ -39,21 +25,20 @@ public class ServidorCliente extends Task
 	private  double NUM2;
 	private  long tiempoValidacion;
 	private  long tiempoRespuestaSolicitud;
+
 	
-	
-	
-	//private LoadGenerator generator = new LoadGenerator("asdasd", 123, this, 333);
 	
 
 	@Override
 	public void fail() {
 		// TODO Auto-generated method stub
-		
+		System.out.println(Task.MENSAJE_FAIL);
 	}
 
 	@Override
 	public void success() {
 		// TODO Auto-generated method stub
+		System.out.println(Task.OK_MESSAGE);
 		
 	}
 
@@ -61,17 +46,18 @@ public class ServidorCliente extends Task
 	public void execute() 
 	{
 		
-		
 		try 
 		{
 			boolean ejecutar = true;
-			Socket servidor = null;
+			Socket servidor=null;
 			PrintWriter escritor = null;
 			BufferedReader lector = null;
 			Certificate certificadoServidor = null ;
 			try 
 			{
-				servidor = new Socket("186.28.23.17", 443);
+				System.out.println("hola");
+				servidor = new Socket("186.28.23.17",443);
+				
 				escritor = new PrintWriter(servidor.getOutputStream(), true);
 				lector = new BufferedReader(new InputStreamReader(
 						servidor.getInputStream()));
@@ -96,12 +82,7 @@ public class ServidorCliente extends Task
 				fromUser = "";
 				
 				if ((fromServer = lector.readLine()) != null)
-				{
-					
-
-					
-			
-					
+				{					
 					System.out.println("Servidor: " + fromServer);
 
 					//AlGORTIMOS QUE SE VAN A UTILIZAR
@@ -207,8 +188,7 @@ public class ServidorCliente extends Task
 										FileWriter salida = new FileWriter(cosa, true);
 										salida.write("\n" + tiempoValidacion);
 										salida.close();
-										
-										
+															
 										System.out.println("Servidor: "+fromServer);
 										
 										//ETAPA 4: ACTUALIZACION
@@ -253,25 +233,21 @@ public class ServidorCliente extends Task
 										}
 										fromUser=Transformacion.transformar(llave);
 										escritor.println("INIT:" + fromUser);
-										
-										
+																				
 										long reporto = System.currentTimeMillis();
-
 										
 										System.out.println("Cliente: INIT:" +fromUser);
 										
 										byte[] keyBytes = certificadoServidor.getPublicKey().getEncoded();           
 
 										String ordenes1 = "ordenes asd";
-
-										
+							
 										Cipher orden = Cipher.getInstance("RSA");
 										orden.init(Cipher.ENCRYPT_MODE, certificadoServidor.getPublicKey());
 										byte[] envio = orden.doFinal(ordenes1.getBytes());
 										fromUser=Transformacion.transformar(envio);
 										escritor.println( fromUser);
 										System.out.println("Cliente: Ordenes: " +fromUser);
-
 										
 										Mac mac = Mac.getInstance("HmacMD5");
 										mac.init(millave);	
@@ -284,7 +260,6 @@ public class ServidorCliente extends Task
 										fromUser=Transformacion.transformar(intorder);
 										
 										escritor.println(fromUser );
-
 										
 										System.out.println("Cliente: ordenes con mac: " +fromUser);
 
@@ -293,8 +268,6 @@ public class ServidorCliente extends Task
 										{
 											
 											long recibo = System.currentTimeMillis();
-
-											
 											
 											tiempoRespuestaSolicitud = recibo - reporto;
 											File cosa2 = new File("./tiempoSalida2.txt"); 
@@ -305,14 +278,8 @@ public class ServidorCliente extends Task
 											System.out.println("Cliente: Se demora " + tiempoRespuestaSolicitud);
 
 											System.out.println("CORONAMOS");
-											break;
-											
-											
-											
-										
-										}
-										
-
+											break;										
+										}								
 //										System.out.println("Jesus: "+fromUser);
 									}
 									else
@@ -375,9 +342,6 @@ public class ServidorCliente extends Task
 
 			// TODO: handle exception
 		}
-		
-		
-		// TODO Auto-generated method stub
 		
 	}
 }
