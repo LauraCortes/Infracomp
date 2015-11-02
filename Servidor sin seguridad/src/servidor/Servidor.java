@@ -51,7 +51,7 @@ public class Servidor implements Runnable  {
 	/**
 	 * El semaforo que permite tomar turnos para atender las solicitudes.
 	 */
-	private static Semaphore semaphore;
+	private Semaphore semaphore;
 
 	/**
 	 * El id del Thread
@@ -73,9 +73,7 @@ public class Servidor implements Runnable  {
 		// Crea el socket que escucha en el puerto seleccionado.
 		socket = new ServerSocket(PUERTO);
 
-		// Crea un semaforo que da turnos para usar el socket.
-
-				// Genera n threads que correran durante la sesion.
+		// Genera n threads que correran durante la sesion.
 				Servidor [] threads = new Servidor[N_THREADS];
 				
 				//Nuevo implementacion del Pool de threads con las librerias nuevas.
@@ -84,6 +82,7 @@ public class Servidor implements Runnable  {
 					executorService.execute(new Servidor(i));
 				}
 				System.out.println("El servidor esta listo para aceptar conexiones.");
+
 	}
 
 	/**
@@ -91,14 +90,12 @@ public class Servidor implements Runnable  {
 	 * 
 	 * @param socket
 	 *            El socket por el cual llegan las conexiones.
-	 * @param semaphore
-	 *            Un semaforo que permite dar turnos para usar el socket.
 	 * @throws InterruptedException
 	 *             Si hubo un problema con el semaforo.
 	 * @throws SocketException 
 	 */
 	public Servidor(int id) throws  SocketException {
-		this.id = id;	
+		this.id =id;		
 	}
 
 	/**
@@ -124,12 +121,8 @@ public class Servidor implements Runnable  {
 				continue;
 			} 
 			System.out.println("Thread " + id + " recibe a un cliente.");
-
-			Protocolo protocolo =new Protocolo();
-			protocolo.atenderCliente(s);
+			Protocolo p= new Protocolo();
+			p.atenderCliente(s);
 		}
 	}
-
-
-
 }
